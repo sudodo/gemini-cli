@@ -151,6 +151,77 @@ Use MCP servers to integrate your local system tools with your enterprise collab
 
 Head over to the [Uninstall](docs/Uninstall.md) guide for uninstallation instructions.
 
+## カスタムコマンド名でのインストール (gemini-custom)
+
+既存の`gemini`コマンドを保持したまま、このフォーク版を`gemini-custom`コマンドとしてインストールする手順：
+
+### 前提条件
+- Node.js version 20以上がインストールされていること
+- 既存の`gemini`コマンドがインストール済みであること
+
+### インストール手順
+
+1. **リポジトリのクローン**
+   ```bash
+   git clone https://github.com/your-username/gemini-cli-sudodo.git
+   cd gemini-cli-sudodo
+   ```
+
+2. **設定ファイルの更新**
+   
+   以下の3つのファイルを更新して、コマンド名を`gemini-custom`に変更します：
+
+   - `package.json` の bin フィールド:
+     ```json
+     "bin": {
+       "gemini-custom": "bundle/gemini-custom.js"
+     },
+     ```
+
+   - `packages/cli/package.json` の bin フィールド:
+     ```json
+     "bin": {
+       "gemini-custom": "dist/index.js"
+     },
+     ```
+
+   - `esbuild.config.js` の outfile:
+     ```javascript
+     outfile: 'bundle/gemini-custom.js',
+     ```
+
+3. **ビルドとインストール**
+   ```bash
+   # 依存関係のインストール
+   npm install
+   
+   # パッケージのビルド
+   npm run build
+   
+   # バンドルの作成
+   npm run bundle
+   
+   # グローバルにインストール
+   npm link
+   ```
+
+4. **インストールの確認**
+   ```bash
+   # カスタム版の確認
+   gemini-custom --version
+   
+   # 既存の公式版の確認（影響を受けていないことを確認）
+   gemini --version
+   ```
+
+### アンインストール
+
+`gemini-custom`を削除する場合は、プロジェクトディレクトリで以下を実行：
+
+```bash
+npm unlink
+```
+
 ## Terms of Service and Privacy Notice
 
 For details on the terms of service and privacy notice applicable to your use of Gemini CLI, see the [Terms of Service and Privacy Notice](./docs/tos-privacy.md).
