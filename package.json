@@ -46,7 +46,7 @@
     "clean": "node scripts/clean.js"
   },
   "bin": {
-    "gemini": "bundle/gemini.js"
+    "gemini-custom": "bundle/gemini-custom.js"
   },
   "files": [
     "bundle/",
