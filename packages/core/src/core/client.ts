@@ -120,6 +120,14 @@ export class GeminiClient {
     this.embeddingModel = config.getEmbeddingModel();
     this.loopDetector = new LoopDetectionService(config);
     this.lastPromptId = this.config.getSessionId();
+    
+    // Set temperature and topP from config if provided
+    if (config.getTemperature() !== undefined) {
+      this.generateContentConfig.temperature = config.getTemperature()!;
+    }
+    if (config.getTopP() !== undefined) {
+      this.generateContentConfig.topP = config.getTopP()!;
+    }
   }
 
   async initialize(contentGeneratorConfig: ContentGeneratorConfig) {

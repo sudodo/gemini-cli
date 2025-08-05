@@ -65,6 +65,8 @@ export interface CliArgs {
   ideModeFeature: boolean | undefined;
   proxy: string | undefined;
   includeDirectories: string[] | undefined;
+  temperature: number | undefined;
+  topP: number | undefined;
 }
 
 export async function parseArguments(): Promise<CliArgs> {
@@ -211,6 +213,26 @@ export async function parseArguments(): Promise<CliArgs> {
       coerce: (dirs: string[]) =>
         // Handle comma-separated values
         dirs.flatMap((dir) => dir.split(',').map((d) => d.trim())),
+    })
+    .option('temperature', {
+      type: 'number',
+      description: 'Temperature for text generation (0.0 to 2.0, default: 0)',
+      coerce: (value: number) => {
+        if (value < 0 || value > 2) {
+          throw new Error('Temperature must be between 0.0 and 2.0');
+        }
+        return value;
+      },
+    })
+    .option('topP', {
+      type: 'number',
+      description: 'Top-p (nucleus) sampling parameter (0.0 to 1.0, default: 1)',
+      coerce: (value: number) => {
+        if (value < 0 || value > 1) {
+          throw new Error('topP must be between 0.0 and 1.0');
+        }
+        return value;
+      },
     })
     .version(await getCliVersion()) // This will enable the --version flag based on package.json
     .alias('v', 'version')
@@ -453,6 +475,8 @@ export async function loadCliConfig(
     ideMode,
     ideModeFeature,
     ideClient,
+    temperature: argv.temperature,
+    topP: argv.topP,
   });
 }
 

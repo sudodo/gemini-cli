@@ -188,6 +188,8 @@ export interface ConfigParameters {
   ideModeFeature?: boolean;
   ideMode?: boolean;
   ideClient: IdeClient;
+  temperature?: number;
+  topP?: number;
 }
 
 export class Config {
@@ -235,6 +237,8 @@ export class Config {
   private ideClient: IdeClient;
   private inFallbackMode = false;
   private readonly maxSessionTurns: number;
+  private readonly temperature: number | undefined;
+  private readonly topP: number | undefined;
   private readonly listExtensions: boolean;
   private readonly _extensions: GeminiCLIExtension[];
   private readonly _blockedMcpServers: Array<{
@@ -304,6 +308,8 @@ export class Config {
     this.ideModeFeature = params.ideModeFeature ?? false;
     this.ideMode = params.ideMode ?? false;
     this.ideClient = params.ideClient;
+    this.temperature = params.temperature;
+    this.topP = params.topP;
 
     if (params.contextFileName) {
       setGeminiMdFilename(params.contextFileName);
@@ -532,6 +538,14 @@ export class Config {
 
   getGeminiClient(): GeminiClient {
     return this.geminiClient;
+  }
+
+  getTemperature(): number | undefined {
+    return this.temperature;
+  }
+
+  getTopP(): number | undefined {
+    return this.topP;
   }
 
   getGeminiDir(): string {
