@@ -25,7 +25,7 @@ Install the gemini-cli fork as `gemini-custom` command while preserving the exis
 
 - **Node.js**: Version 20 or higher
 - **npm**: Included with Node.js
-- **Pre-built bundle**: `bundle/gemini-custom.js` (already included)
+- **Bundle**: Will be built automatically during installation if needed (may take a few minutes on first install)
 
 ### Features
 
@@ -46,7 +46,7 @@ Install the gemini-cli fork as `gemini-custom` command while preserving the exis
 ./install_as_gemini-custom.sh install
 ```
 
-**Example Output:**
+**Example Output (if bundle already exists):**
 ```
 [INFO] Starting installation...
 [INFO] Checking Node.js version...
@@ -56,7 +56,7 @@ Install the gemini-cli fork as `gemini-custom` command while preserving the exis
 [SUCCESS] npm is available
 [INFO] Checking bundle file...
 [INFO] Bundle file size: 12M
-[SUCCESS] Bundle file exists
+[SUCCESS] Bundle file ready
 [INFO] No existing gemini-custom installation found
 [INFO] Running npm link...
 [SUCCESS] npm link completed successfully
@@ -69,6 +69,23 @@ Install the gemini-cli fork as `gemini-custom` command while preserving the exis
 [INFO]
 [INFO] You can now use: gemini-custom
 [INFO] Your existing 'gemini' command is preserved
+```
+
+**Example Output (first time - auto-build):**
+```
+[INFO] Checking bundle file...
+[WARNING] Bundle file not found: /path/to/bundle/gemini-custom.js
+[INFO] Building bundle automatically (this may take a few minutes)...
+[INFO] Installing dependencies...
+[SUCCESS] Dependencies installed
+[INFO] Running npm run bundle...
+[SUCCESS] Bundle built successfully
+[INFO] Bundle file size: 12M
+[SUCCESS] Bundle file ready
+[INFO] No existing gemini-custom installation found
+[INFO] Running npm link...
+[SUCCESS] npm link completed successfully
+...
 ```
 
 #### Check Status
@@ -191,26 +208,36 @@ which gemini-custom
 gemini-custom
 ```
 
-### Problem: Bundle file not found
+### Problem: Bundle build fails during installation
 
 **Error Message:**
 ```
-[ERROR] Bundle file not found: /path/to/bundle/gemini-custom.js
-[ERROR] Please build the project first with: npm run bundle
+[ERROR] Failed to build bundle
+[ERROR] Please run 'npm run bundle' manually in /path/to/gemini-cli-sudodo
 ```
 
-**Solution**: The bundle file needs to be built first. Run:
+**Solution**: The automatic build failed. Build manually:
 
 ```bash
+cd script/gemini-cli-sudodo
+
 # Install dependencies
 npm install
 
 # Build the bundle
 npm run bundle
 
+# Verify bundle was created
+ls -lh bundle/gemini-custom.js
+
 # Then retry installation
 ./install_as_gemini-custom.sh install
 ```
+
+**Common causes:**
+- Insufficient disk space
+- Missing build dependencies
+- Network issues during npm install
 
 ### Problem: Node.js version too old
 

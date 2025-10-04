@@ -129,21 +129,51 @@ check_npm() {
     print_success "npm is available"
 }
 
-# Check if bundle exists
+# Check if bundle exists and build if necessary
 check_bundle() {
     print_info "Checking bundle file..."
 
     local bundle_path="$SCRIPT_DIR/bundle/gemini-custom.js"
 
     if [ ! -f "$bundle_path" ]; then
-        print_error "Bundle file not found: $bundle_path"
-        print_error "Please build the project first with: npm run bundle"
-        exit 1
+        print_warning "Bundle file not found: $bundle_path"
+        print_info "Building bundle automatically (this may take a few minutes)..."
+
+        # Change to script directory
+        cd "$SCRIPT_DIR"
+
+        # Install dependencies if node_modules doesn't exist
+        if [ ! -d "node_modules" ]; then
+            print_info "Installing dependencies..."
+            if npm install; then
+                print_success "Dependencies installed"
+            else
+                print_error "Failed to install dependencies"
+                print_error "Please run 'npm install' manually in $SCRIPT_DIR"
+                exit 1
+            fi
+        fi
+
+        # Build bundle
+        print_info "Running npm run bundle..."
+        if npm run bundle; then
+            print_success "Bundle built successfully"
+        else
+            print_error "Failed to build bundle"
+            print_error "Please run 'npm run bundle' manually in $SCRIPT_DIR"
+            exit 1
+        fi
+
+        # Verify bundle was created
+        if [ ! -f "$bundle_path" ]; then
+            print_error "Bundle file still not found after build"
+            exit 1
+        fi
     fi
 
     local file_size=$(du -h "$bundle_path" | cut -f1)
     print_info "Bundle file size: $file_size"
-    print_success "Bundle file exists"
+    print_success "Bundle file ready"
 }
 
 # Check if gemini-custom is already installed
